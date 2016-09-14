@@ -1,2 +1,3 @@
 # ipython
-files created by IPython
+
+different homeworks tasks in ipynb format
