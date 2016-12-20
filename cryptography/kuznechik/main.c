@@ -44,12 +44,12 @@ void self_test()
 
 	for (i = 0; i < 16; i++)
 		x.one_sixt[i] = testvec_pt[i];
-	printf("PT\t=");
+	printf("MSG TO BE ENCRYPT\t=");
 	print_w128(&x);
 
 	encrypt_block(&key, &x);
 
-	printf("CT\t=");
+	printf("ENCRYPTED MSG\t=");
 	print_w128(&x);
 
 	for (i = 0; i < 16; i++) {
@@ -64,7 +64,7 @@ void self_test()
 	set_decrypt_key(&key, test_key);
 	decrypt_block(&key, &x);
 
-	printf("PT\t=");
+	printf("DECRYPTED MSG\t=");
 	print_w128(&x);
 
 	for (i = 0; i < 16; i++) {
@@ -104,7 +104,7 @@ void speed_test()
 	
 	
 	for (i = 0; i < 0x100; i++)
-	buf[i] = i;
+		buf[i] = i;
 	set_decrypt_key(&key, test_key);	
 
 	for (n = 100, tim = 0; tim < 2 * CLOCKS_PER_SEC; n <<= 1) {

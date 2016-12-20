@@ -3,7 +3,7 @@
 #include "kuznechik.h"
 
 #ifndef __SSE4_1__
-#error "This version requires __SSE4_1__"
+#error "Require __SSE4_1__"
 #endif
 
 #include <mmintrin.h>
@@ -196,16 +196,20 @@ void set_encrypt_key(kuz_key_t *kuz, const uint8_t key[32])
 	for (i = 1; i <= 32; i++) {
 
 		// C Value
+		//C_i = L(vec(i))
 		c.half[0] = 0;
 		c.half[1] = 0;
-		c.one_sixt[15] = i;		// load round in lsb
+		c.one_sixt[15] = i;
 		linear_mapping(&c);
 		
+		//F[k](a_1, a_0) = (LSX[k](a_1) xor a_0, a_1)
 		z.half[0] = x.half[0] ^ c.half[0];
 		z.half[1] = x.half[1] ^ c.half[1];
 		for (j = 0; j < 16; j++)
 			z.one_sixt[j] = pi[z.one_sixt[j]];
 		linear_mapping(&z);
+
+		//(z, y) -> (x, y)
 		z.half[0] ^= y.half[0];
 		z.half[1] ^= y.half[1];
 		
@@ -262,7 +266,6 @@ void encrypt_block(kuz_key_t *key, void *blk)
 			
 	}
 	x ^= *((__m128i *) &key->k[9]);
-
 	*((__m128i *) blk) = x;
 }
 
