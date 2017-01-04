@@ -1,7 +1,0 @@
-{
-    "version": "0.1.0",
-    "command": "gcc",
-    "isShellCommand": true,
-    "showOutput": "always",
-    "args": ["-Wall", "-Ofast", "-march=native",  "-c", "kuznechik2/kuznechik.c", "-o", "kuznechik2/kuznechik.o"]
-}
