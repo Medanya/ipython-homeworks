@@ -9,10 +9,12 @@ const uint8_t test_key[32] = {
 	0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10, 
 	0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF	
 };
+
 const uint8_t testvec_pt[16] = {
 	0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x00, 
 	0xFF, 0xEE, 0xDD, 0xCC, 0xBB, 0xAA, 0x99, 0x88
 };
+
 const uint8_t testvec_ct[16] = { 
 	0x7F, 0x67, 0x9D, 0x90, 0xBE, 0xBC, 0x24, 0x30, 
 	0x5A, 0x46, 0x8D, 0x42, 0xB9, 0xD4, 0xED, 0xCD
@@ -79,49 +81,50 @@ void self_test()
 
 void speed_test()
 {
-	int i, j, n;
+	int i, j;
+	int n;
+	n = 10000;
 	kuz_key_t key;
-	uint32_t buf[0x100];
+	uint32_t buf[n];
 	clock_t tim;
 
-	for (i = 0; i < 0x100; i++)
+	for (i = 0; i < n; i++)
 		buf[i] = i;
 	set_encrypt_key(&key, test_key);	
 
-	for (n = 100, tim = 0; tim < 2 * CLOCKS_PER_SEC; n <<= 1) {
-		tim = clock();
-		for (j = 0; j < n; j++) {
-			for (i = 0; i < 0x100; i += 4)
-				encrypt_block(&key, &buf[i]);
-		}
-		tim = clock() - tim;
-		printf("Encrypt: %.3f kB/s (n=%dkB,t=%.3fs)\r",
-			((double) CLOCKS_PER_SEC * n) / ((double) tim), 
-			n, ((double) tim) / ((double) CLOCKS_PER_SEC));
-		fflush(stdout);
+	//for (n = 100, tim = 0; tim < 2 * CLOCKS_PER_SEC; n <<= 1) {
+		//printf("%.3f", (double) CLOCKS_PER_SEC);
+	
+	tim = clock();
+	//n = 0x100;
+	for (j = 0; j < n; j++) {
+		for (i = 0; i < 0x100; i += 4)
+			encrypt_block(&key, &buf[i]);
 	}
+	tim = clock() - tim;
+	//printf("%.3f", (double) tim);
+	printf("Encrypt: %.3f kB/s (n=%dkB,t=%.3fs)\r",
+		((double) CLOCKS_PER_SEC * n) / ((double) tim), 
+		n, ((double) tim) / ((double) CLOCKS_PER_SEC));
+	fflush(stdout);
 	printf("\n");
 	
-	
-	for (i = 0; i < 0x100; i++)
+	for (i = 0; i < n; i++)
 		buf[i] = i;
 	set_decrypt_key(&key, test_key);	
 
-	for (n = 100, tim = 0; tim < 2 * CLOCKS_PER_SEC; n <<= 1) {
-		tim = clock();
-		for (j = 0; j < n; j++) {
-			for (i = 0; i < 0x100; i += 4)
-				decrypt_block(&key, &buf[i]);
-		}
-		tim = clock() - tim;
-		printf("Decrypt: %.3f kB/s (n=%dkB,t=%.3fs)\r",
-			((double) CLOCKS_PER_SEC * n) / ((double) tim), 
-			n, ((double) tim) / ((double) CLOCKS_PER_SEC));
-		fflush(stdout);
+	tim = clock();
+	for (j = 0; j < n; j++) {
+		for (i = 0; i < n; i += 4)
+			decrypt_block(&key, &buf[i]);
 	}
+	tim = clock() - tim;
+	printf("Decrypt: %.3f kB/s (n=%dkB,t=%.3fs)\r",
+		((double) CLOCKS_PER_SEC * n) / ((double) tim), 
+		n, ((double) tim) / ((double) CLOCKS_PER_SEC));
+	fflush(stdout);
 	printf("\n");
 }
-
 
 int main(int argc, char **argv)
 {	

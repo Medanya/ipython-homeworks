@@ -266,6 +266,7 @@ void encrypt_block(kuz_key_t *key, void *blk)
 			
 	}
 	x ^= *((__m128i *) &key->k[9]);
+
 	*((__m128i *) blk) = x;
 }
 
@@ -293,7 +294,7 @@ void decrypt_block(kuz_key_t *key, void *blk)
 		linear_table_decrypt[14][((uint8_t *) &x)[14]] ^
 		linear_table_decrypt[15][((uint8_t *) &x)[15]];
 
-	for (i = 9; i > 1; i--) {
+	for (i = 9; i > 0; i--) {
 		x ^= *((__m128i *) &key->k[i]);
 		x = pi_linear_table_decrypt[ 0][((uint8_t *) &x)[ 0]] ^
 			pi_linear_table_decrypt[ 1][((uint8_t *) &x)[ 1]] ^
